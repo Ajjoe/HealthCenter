@@ -1,17 +1,62 @@
 import java.util.Scanner;
-
-class Staff {
+class Person{
     String[] firstName;
     String[] lastName;
     String[] gender;
-    String[] phone;
     int[] age;
+}
+class Staff extends Person {
+    String[] phone;
     String[] department;
     Double[] weeklyHours;
     Double[] payRate;
     String[] jobTitle;
     Double[] yearpay;
     Double[] payperweek;
+    private boolean validateInput(Scanner scnr, int i){
+        // Validate first name
+        if (firstName[i].trim().isEmpty()) {
+            System.out.println("First name cannot be empty.");
+            return false;
+        }
+
+        // Validate last name
+        if (lastName[i].trim().isEmpty()) {
+            System.out.println("Last name cannot be empty.");
+            return false;
+        }
+
+        // Validate gender
+        if (!gender[i].equalsIgnoreCase("M") && !gender[i].equalsIgnoreCase("F")) {
+            System.out.println("Invalid gender. Please enter M or F.");
+            return false;
+        }
+
+        // Validate phone number
+        if (!phone[i].matches("\\(\\d{3}\\)-\\d{3}-\\d{4}")) {
+            System.out.println("Invalid phone number format. Use (###)-###-####.");
+            return false;
+        }
+
+        // Validate year of birth
+        if (age[i] < 1900 || age[i] > 2024) {
+            System.out.println("Invalid year of birth.");
+            return false;
+        }
+
+        // Validate weekly hours
+        if (weeklyHours[i] < 0) {
+            System.out.println("Weekly hours cannot be negative.");
+            return false;
+        }
+
+        // Validate pay rate
+        if (payRate[i] < 0) {
+            System.out.println("Pay rate cannot be negative.");
+            return false;
+        }
+       return true;
+     }
     private double calculatePay(double weeklyHours, double payRate) {// method for pay
         double pay;
         if (weeklyHours > 40) {
@@ -19,8 +64,8 @@ class Staff {
         } else {
             pay = weeklyHours * payRate;
         }
-        return pay;
-    }
+        return pay; }
+
     public Staff(Scanner scnr) {
         System.out.println("Please enter the amount of Staff members:");
         int staffNum = scnr.nextInt();
@@ -58,6 +103,12 @@ class Staff {
             scnr.nextLine(); // Consume
             System.out.print("Please enter job Title: ");
             jobTitle[i] = scnr.nextLine();
+            boolean isValid = validateInput(scnr, i);
+            if (!isValid) {
+                System.out.println("Invalid input. Please try again.");
+                i--; // incremeting through each staff member to check for valid information
+                continue;
+            }
             // Calculate other fields
         payperweek[i] = calculatePay(weeklyHours[i], payRate[i]);
         yearpay[i] = payperweek[i] * 52;}
@@ -88,10 +139,8 @@ class Staff {
     }
 }
 
-class Patient {
-    String[] firstName;
-    String[] lastName;
-    int[] age;
+class Patient extends Person {
+    String[] note;           //Note for doctor 
     String[] gender;
     String[] phone;
     Double[] weight;
@@ -139,6 +188,7 @@ return totalHeight / height.length;
         System.out.println("Please enter the number of Patients:");
         int patientNum = scnr.nextInt();
         scnr.nextLine(); // consume newline
+        note = new String[patientNum];
         firstName = new String[patientNum];
         lastName = new String[patientNum];
         age = new int[patientNum];
@@ -167,6 +217,8 @@ return totalHeight / height.length;
             gender[i] = scnr.nextLine();
             System.out.println("Hello " + firstName[i] + ", please enter your phone number: ");
             phone[i] = scnr.nextLine();
+            System.out.println("Please enter the any symptoms or problems you recently have noticed");
+            note[i] = scnr.nextLine();
             System.out.println("Please input your weight: ");
             weight[i] = scnr.nextDouble();
             System.out.println("Please input your height in inches: ");
@@ -189,6 +241,7 @@ return totalHeight / height.length;
     public void printDetails() {
         for (int i = 0; i < firstName.length; i++) {
             System.out.println("Patient " + (i + 1) + " details:");
+            System.out.println("Patients note: " + note[i]);
             System.out.println("Patient name: " + firstName[i] + " " + lastName[i]);
             System.out.println("DOB :" + age[i]);
             System.out.println("Age :" + (getAge(i)));
@@ -243,11 +296,11 @@ public class App {
         Scanner scnr = new Scanner(System.in);
         Staff staff = new Staff(scnr);
         staff.printDetails();
-        System.out.println("__________");
+        System.out.println("_____________Menu 1_____________________");
 
         Patient patient = new Patient(scnr);
         patient.printDetails();
-        System.out.println("____________1");
+        System.out.println("_____________Menu 2_____________________");
 
         scnr.close();
 
